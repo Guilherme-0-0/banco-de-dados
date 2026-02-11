@@ -1,64 +1,54 @@
--- database: :memory:
--- Criando o banco
-CREATE DATABASE escola;
-USE escola;
+PRAGMA foreign_keys = ON;
 
--- Tabela de alunos
-CREATE TABLE alunos (
-    id_aluno INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
+CREATE TABLE IF NOT EXISTS alunos (
+    id_aluno INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL,
     data_nascimento DATE,
-    cpf VARCHAR(14) UNIQUE,
-    email VARCHAR(100)
+    cpf TEXT UNIQUE,
+    email TEXT
 );
 
--- Tabela de professores
-CREATE TABLE professores (
-    id_professor INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100),
-    especialidade VARCHAR(50)
+CREATE TABLE IF NOT EXISTS professores (
+    id_professor INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL,
+    email TEXT,
+    especialidade TEXT
 );
 
--- Tabela de disciplinas
-CREATE TABLE disciplinas (
-    id_disciplina INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(50) NOT NULL,
-    carga_horaria INT NOT NULL
+CREATE TABLE IF NOT EXISTS disciplinas (
+    id_disciplina INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL,
+    carga_horaria INTEGER NOT NULL
 );
 
--- Tabela de turmas
-CREATE TABLE turmas (
-    id_turma INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(20) NOT NULL,
-    ano INT NOT NULL
+CREATE TABLE IF NOT EXISTS turmas (
+    id_turma INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL,
+    ano INTEGER NOT NULL
 );
 
--- Relação professor x disciplina
-CREATE TABLE professor_disciplina (
-    id_professor INT,
-    id_disciplina INT,
+CREATE TABLE IF NOT EXISTS professor_disciplina (
+    id_professor INTEGER,
+    id_disciplina INTEGER,
     PRIMARY KEY (id_professor, id_disciplina),
-    FOREIGN KEY (id_professor) REFERENCES professores(id_professor),
-    FOREIGN KEY (id_disciplina) REFERENCES disciplinas(id_disciplina)
+    FOREIGN KEY (id_professor) REFERENCES professores(id_professor) ON DELETE CASCADE,
+    FOREIGN KEY (id_disciplina) REFERENCES disciplinas(id_disciplina) ON DELETE CASCADE
 );
 
--- Matrículas
-CREATE TABLE matriculas (
-    id_matricula INT AUTO_INCREMENT PRIMARY KEY,
-    id_aluno INT,
-    id_turma INT,
+CREATE TABLE IF NOT EXISTS matriculas (
+    id_matricula INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_aluno INTEGER,
+    id_turma INTEGER,
     data_matricula DATE,
-    FOREIGN KEY (id_aluno) REFERENCES alunos(id_aluno),
-    FOREIGN KEY (id_turma) REFERENCES turmas(id_turma)
+    FOREIGN KEY (id_aluno) REFERENCES alunos(id_aluno) ON DELETE CASCADE,
+    FOREIGN KEY (id_turma) REFERENCES turmas(id_turma) ON DELETE CASCADE
 );
 
--- Notas
-CREATE TABLE notas (
-    id_nota INT AUTO_INCREMENT PRIMARY KEY,
-    id_aluno INT,
-    id_disciplina INT,
-    nota DECIMAL(4,2),
-    FOREIGN KEY (id_aluno) REFERENCES alunos(id_aluno),
-    FOREIGN KEY (id_disciplina) REFERENCES disciplinas(id_disciplina)
+CREATE TABLE IF NOT EXISTS notas (
+    id_nota INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_aluno INTEGER,
+    id_disciplina INTEGER,
+    nota REAL CHECK (nota >= 0 AND nota <= 10),
+    FOREIGN KEY (id_aluno) REFERENCES alunos(id_aluno) ON DELETE CASCADE,
+    FOREIGN KEY (id_disciplina) REFERENCES disciplinas(id_disciplina) ON DELETE CASCADE
 );
